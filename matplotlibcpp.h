@@ -47,62 +47,63 @@ static std::string s_backend;
 
 struct _interpreter {
     PyObject* s_python_function_arrow;
-    PyObject *s_python_function_show;
-    PyObject *s_python_function_close;
-    PyObject *s_python_function_draw;
-    PyObject *s_python_function_pause;
-    PyObject *s_python_function_save;
-    PyObject *s_python_function_figure;
-    PyObject *s_python_function_fignum_exists;
-    PyObject *s_python_function_plot;
-    PyObject *s_python_function_quiver;
+    PyObject* s_python_function_show;
+    PyObject* s_python_function_close;
+    PyObject* s_python_function_draw;
+    PyObject* s_python_function_pause;
+    PyObject* s_python_function_save;
+    PyObject* s_python_function_figure;
+    PyObject* s_python_function_fignum_exists;
+    PyObject* s_python_function_plot;
+    PyObject* s_python_function_quiver;
     PyObject* s_python_function_contour;
-    PyObject *s_python_function_semilogx;
-    PyObject *s_python_function_semilogy;
-    PyObject *s_python_function_loglog;
-    PyObject *s_python_function_fill;
-    PyObject *s_python_function_fill_between;
-    PyObject *s_python_function_hist;
-    PyObject *s_python_function_imshow;
-    PyObject *s_python_function_scatter;
-    PyObject *s_python_function_boxplot;
-    PyObject *s_python_function_subplot;
-    PyObject *s_python_function_subplot2grid;
-    PyObject *s_python_function_legend;
-    PyObject *s_python_function_xlim;
-    PyObject *s_python_function_ion;
-    PyObject *s_python_function_ginput;
-    PyObject *s_python_function_ylim;
-    PyObject *s_python_function_title;
-    PyObject *s_python_function_axis;
-    PyObject *s_python_function_axhline;
-    PyObject *s_python_function_axvline;
-    PyObject *s_python_function_axvspan;
-    PyObject *s_python_function_xlabel;
-    PyObject *s_python_function_ylabel;
-    PyObject *s_python_function_gca;
-    PyObject *s_python_function_xticks;
-    PyObject *s_python_function_yticks;
+    PyObject* s_python_function_semilogx;
+    PyObject* s_python_function_semilogy;
+    PyObject* s_python_function_loglog;
+    PyObject* s_python_function_fill;
+    PyObject* s_python_function_fill_between;
+    PyObject* s_python_function_hist;
+    PyObject* s_python_function_imshow;
+    PyObject* s_python_function_scatter;
+    PyObject* s_python_function_boxplot;
+    PyObject* s_python_function_subplot;
+    PyObject* s_python_function_subplot2grid;
+    PyObject* s_python_function_legend;
+    PyObject* s_python_function_xlim;
+    PyObject* s_python_function_ion;
+    PyObject* s_python_function_ginput;
+    PyObject* s_python_function_ylim;
+    PyObject* s_python_function_title;
+    PyObject* s_python_function_axis;
+    PyObject* s_python_function_axhline;
+    PyObject* s_python_function_axvline;
+    PyObject* s_python_function_axvspan;
+    PyObject* s_python_function_xlabel;
+    PyObject* s_python_function_ylabel;
+    PyObject* s_python_function_gca;
+    PyObject* s_python_function_xticks;
+    PyObject* s_python_function_yticks;
     PyObject* s_python_function_margins;
-    PyObject *s_python_function_tick_params;
-    PyObject *s_python_function_grid;
+    PyObject* s_python_function_tick_params;
+    PyObject* s_python_function_grid;
     PyObject* s_python_function_cla;
-    PyObject *s_python_function_clf;
-    PyObject *s_python_function_errorbar;
-    PyObject *s_python_function_annotate;
-    PyObject *s_python_function_tight_layout;
-    PyObject *s_python_colormap;
-    PyObject *s_python_empty_tuple;
-    PyObject *s_python_function_stem;
-    PyObject *s_python_function_xkcd;
-    PyObject *s_python_function_text;
-    PyObject *s_python_function_suptitle;
-    PyObject *s_python_function_bar;
-    PyObject *s_python_function_barh;
-    PyObject *s_python_function_colorbar;
-    PyObject *s_python_function_subplots_adjust;
-    PyObject *s_python_function_rcparams;
-    PyObject *s_python_function_spy;
+    PyObject* s_python_function_clf;
+    PyObject* s_python_function_errorbar;
+    PyObject* s_python_function_annotate;
+    PyObject* s_python_function_tight_layout;
+    PyObject* s_python_colormap;
+    PyObject* s_python_empty_tuple;
+    PyObject* s_python_function_stem;
+    PyObject* s_python_function_xkcd;
+    PyObject* s_python_function_text;
+    PyObject* s_python_function_suptitle;
+    PyObject* s_python_function_bar;
+    PyObject* s_python_function_barh;
+    PyObject* s_python_function_colorbar;
+    PyObject* s_python_function_subplots_adjust;
+    PyObject* s_python_function_rcparams;
+    PyObject* s_python_function_spy;
+    PyObject* pythonFunctionAxes;
 
     /* For now, _interpreter is implemented as a singleton since its currently not possible to have
        multiple independent embedded python interpreters without patching the python source code
@@ -277,7 +278,8 @@ private:
         s_python_function_colorbar = PyObject_GetAttrString(pymod, "colorbar");
         s_python_function_subplots_adjust = safe_import(pymod,"subplots_adjust");
         s_python_function_rcparams = PyObject_GetAttrString(pymod, "rcParams");
-	s_python_function_spy = PyObject_GetAttrString(pymod, "spy");
+        s_python_function_spy = PyObject_GetAttrString(pymod, "spy");
+        pythonFunctionAxes = PyObject_GetAttrString(pymod, "axes");
 #ifndef WITHOUT_NUMPY
         s_python_function_imshow = safe_import(pymod, "imshow");
 #endif
@@ -558,17 +560,14 @@ void plot_surface(const std::vector<::std::vector<Numeric>> &x,
   PyObject *gca_kwargs = PyDict_New();
   PyDict_SetItemString(gca_kwargs, "projection", PyString_FromString("3d"));
 
-  PyObject *gca = PyObject_GetAttrString(fig, "gca");
-  if (!gca) throw std::runtime_error("No gca");
-  Py_INCREF(gca);
-  PyObject *axis = PyObject_Call(
-      gca, detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
+    PyObject *axis = PyObject_Call(detail::_interpreter::get().pythonFunctionAxes,
+        detail::_interpreter::get().s_python_empty_tuple, gca_kwargs);
 
-  if (!axis) throw std::runtime_error("No axis");
-  Py_INCREF(axis);
-
-  Py_DECREF(gca);
-  Py_DECREF(gca_kwargs);
+    if (!axis)
+    {
+        throw std::runtime_error("Call to axes() failed.");
+    }
+    Py_INCREF(axis);
 
   PyObject *plot_surface = PyObject_GetAttrString(axis, "plot_surface");
   if (!plot_surface) throw std::runtime_error("No surface");

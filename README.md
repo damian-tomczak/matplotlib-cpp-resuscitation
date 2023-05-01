@@ -1,3 +1,5 @@
+An attempt to resuscitate and abandoned library
+
 matplotlib-cpp
 ==============
 
