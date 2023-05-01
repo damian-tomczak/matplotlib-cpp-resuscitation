@@ -380,6 +380,7 @@ PyObject* get_array(const std::vector<Numeric>& v)
 template<typename Numeric>
 PyObject* get_2darray(const std::vector<::std::vector<Numeric>>& v)
 {
+    import_array(); // TODO: consider better place
     if (v.size() < 1) throw std::runtime_error("get_2d_array v too small");
 
     npy_intp vsize[2] = {static_cast<npy_intp>(v.size()),

@@ -1,4 +1,4 @@
-An attempt to resuscitate and abandoned library
+An attempt to resuscitate an abandoned library
 
 matplotlib-cpp
 ==============
